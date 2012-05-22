@@ -14,6 +14,7 @@ namespace Ecommit\MediaBrowserBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ecommit\MediaBrowserBundle\Manager\FileManager;
@@ -27,6 +28,7 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/")
+     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function indexAction()
     {
@@ -37,6 +39,7 @@ class DefaultController extends Controller
      * @Route("/show/{dir}", name="ecommitmediabrowser_show", 
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
+     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function showAction($dir)
     {
@@ -51,6 +54,7 @@ class DefaultController extends Controller
      * @Route("/upload/{dir}", name="ecommitmediabrowser_upload", 
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
+     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function uploadAction(Request $request, $dir)
     {
@@ -84,6 +88,7 @@ class DefaultController extends Controller
      * @Route("/new_folder/{dir}", name="ecommitmediabrowser_new_folder", 
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
+     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function newFolderAction(Request $request, $dir)
     {
@@ -115,6 +120,7 @@ class DefaultController extends Controller
     /**
      * @Route("/delete/{element}", name="ecommitmediabrowser_delete", 
      *      requirements={"element"=".+"})
+     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function deleteAction($element)
     {
@@ -137,6 +143,7 @@ class DefaultController extends Controller
     /**
      * @Route("/rename/{element}", name="ecommitmediabrowser_rename", 
      *      requirements={"element"=".+"})
+     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function renameAction(Request $request, $element)
     {

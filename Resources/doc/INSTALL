@@ -38,5 +38,7 @@ EcommitMediaBrowserBundle:
     type:     annotation
     prefix:   /media-browser
 
+* The user access requires "ROLE_USE_MEDIA_BROWSER" role
+
 * Execute command line (Windows: Admin credentials required):
     php app/console assets:install --symlink web
