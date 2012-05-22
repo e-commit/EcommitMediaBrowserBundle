@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="{{ app.session.locale }}">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Media Browser</title>
+        {{ jQuery_insert_js() }}
+        <script type="text/javascript" src="{% render "EcommitMediaBrowserBundle:Default:header" %}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/ecommitmediabrowser/js/tiny_mce_popup.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/ecommitmediabrowser/js/manager.js') }}"></script>
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/ecommitmediabrowser/css/manager.css') }}" />
+    </head>
+    <body>
+            {% block body %}{% endblock %}
+    </body>
+</html>

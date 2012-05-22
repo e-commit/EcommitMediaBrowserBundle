@@ -1,0 +1,5 @@
+ecommit_media_browser:
+    #Chemin racine de l'éditeur (par rapport au dossier web)
+    root_dir: datas
+    #Chemin du fichier Javascript popup TinyMCE 
+    tiny_mce_popup: js/tiny_mce/tiny_mce_popup.js

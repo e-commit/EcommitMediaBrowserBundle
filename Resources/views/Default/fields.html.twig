@@ -1,0 +1,20 @@
+{% block form_widget %}
+{% spaceless %}
+    <span {{ block('widget_container_attributes') }}>
+        {{ block('field_rows') }}
+        {{ form_rest(form) }}
+    </span>
+{% endspaceless %}
+{% endblock form_widget %}
+
+{% block form_errors %}
+{% spaceless %}
+    {% if errors|length > 0 %}
+        <script>
+        {% for error in errors %}
+            alert("{{ error.messageTemplate|trans(error.messageParameters, 'validators') }}");
+        {% endfor %}
+        </script>
+    {% endif %}
+{% endspaceless %}
+{% endblock form_errors %}

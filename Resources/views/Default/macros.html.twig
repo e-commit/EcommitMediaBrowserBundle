@@ -1,0 +1,18 @@
+{% macro media_dir(manager, dir) %}
+<tr>
+    <td class="folder" data-path="{{ manager.requestDir~dir.getFilename }}" data-name="{{ dir.getFilename }}" data-url="{{ path('ecommitmediabrowser_show', {'dir': manager.requestDir~dir.getFilename}) }}" data-delete="{{ path('ecommitmediabrowser_delete', {'element': manager.requestDir~dir.getFilename}) }}" data-rename="{{ path('ecommitmediabrowser_rename', {'element': manager.requestDir~dir.getFilename}) }}">
+        <img src="{{ asset('bundles/ecommitmediabrowser/images/16/folder.png') }}" alt="dir"/>
+        <span class="link">{{ dir.getFilename }}</span>
+    </td>
+</tr>
+{% endmacro %}
+
+{% macro media_file(manager, file, is_image) %}
+{% set icon = is_image? 'image.png':'mime.png' %}
+<tr>
+    <td class="file" data-path="{{ manager.requestDir~file.getFilename }}" data-url="{{ asset(manager.rootDir~manager.requestDir~file.getFilename) }}" data-name="{{ file.getFilename }}" data-image="{{ is_image }}" data-size="{{ file.size }}"  data-delete="{{ path('ecommitmediabrowser_delete', {'element': manager.requestDir~file.getFilename}) }}"  data-rename="{{ path('ecommitmediabrowser_rename', {'element': manager.requestDir~file.getFilename}) }}">
+            <img src="{{ asset('bundles/ecommitmediabrowser/images/16/'~icon) }}" alt="file"/>
+            <span class="link">{{ file.getFilename }}</span>
+    </td>
+</tr>
+{% endmacro %}

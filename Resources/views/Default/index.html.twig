@@ -1,0 +1,75 @@
+{% extends 'EcommitMediaBrowserBundle::layout.html.twig' %}
+{% import 'EcommitMediaBrowserBundle:Default:macros.html.twig' as macros %}
+{% form_theme form_file 'EcommitMediaBrowserBundle:Default:fields.html.twig' %}
+{% form_theme form_folder 'EcommitMediaBrowserBundle:Default:fields.html.twig' %}
+
+{% block body %}
+
+{% if app.session.hasFlash('ecommitmediabrowser') %}
+    <script>alert("{{ app.session.flash('ecommitmediabrowser')|trans|e('js') }}");</script>
+{% endif %}
+
+<div id="column-new-file">
+    <form action="{{ path('ecommitmediabrowser_upload', {'dir': manager.requestDir}) }}" method="post" {{ form_enctype(form_file) }}>
+        {{ form_label(form_file.file, 'New file') }}
+        {{ form_widget(form_file.file) }}
+        {{ form_errors(form_file) }}
+        {{ form_errors(form_file.file) }}
+        {{ form_rest(form_file) }}
+        <input type="submit" formnovalidate="1" value="{% trans %}Upload{% endtrans %}" />
+    </form>
+</div>
+<div id="column-new-folder">
+    <form action="{{ path('ecommitmediabrowser_new_folder', {'dir': manager.requestDir}) }}" method="post" {{ form_enctype(form_folder) }}>
+        {{ form_label(form_folder.name, 'New folder') }}
+        {{ form_widget(form_folder.name) }}
+        {{ form_errors(form_folder) }}
+        {{ form_errors(form_folder.name) }}
+        {{ form_rest(form_folder) }}
+        <input type="submit" formnovalidate="1" value="{% trans %}Create{% endtrans %}" />
+    </form>
+</div>
+<div style="clear: both;"></div>
+<hr />
+
+<h1>/{{ manager.requestDir }}</h1>
+
+{% if not manager.isRoot %}
+    <a href="{{ path('ecommitmediabrowser_show', {'dir': manager.parentDir}) }}">
+        <img src="{{ asset('bundles/ecommitmediabrowser/images/16/up.png') }}" alt="up"/>
+    </a><br />
+{% endif %}
+
+<div id="column-files">
+    <table>
+        {% for dir in manager.folders %}
+            {{ macros.media_dir(manager, dir) }}
+        {% endfor %}
+        {% for file in manager.filesWithType %}
+            {{ macros.media_file(manager, file.file, file.is_image) }}
+        {% endfor %}
+    </table>
+</div>
+
+
+<div id="column-overview">
+    <div id="overview-file" style="display: none;">
+        <h3 id="overview-file-name"></h3>
+        <b>{% trans %}Size{% endtrans %}: </b><span id="overview-file-size"></span> octets<br />
+        <a href="#" id="overview-file-rename" onclick="rename_element(this); return false;">{% trans %}Rename{% endtrans %}</a> - 
+        <a href="#" id="overview-file-delete" onclick="if(confirm('{{ 'Do you want to delete this item?'|trans|e('js') }}')) {return true;} else {return false;}">{% trans %}Delete{% endtrans %}</a>
+        <div id="overview-image" style="display: none;">
+            <img src="{{ asset('bundles/ecommitmediabrowser/images/16/image.png') }}" alt="overview" />
+        </div>
+    </div>
+    <div id="overview-dir" style="display: none;">
+        <h3 id="overview-dir-name"></h3>
+        <a href="#" id="overview-dir-open">{% trans %}Open{% endtrans %}</a> - 
+        <a href="#" id="overview-dir-rename" onclick="rename_element(this); return false;">{% trans %}Rename{% endtrans %}</a> - 
+        <a href="#" id="overview-dir-delete" onclick="if(confirm('{{ 'Do you want to delete this item?'|trans|e('js') }}')) {return true;} else {return false;}">{% trans %}Delete{% endtrans %}</a><br />
+    </div>
+</div>
+
+<div style="clear: both;"></div>
+
+{% endblock %}
