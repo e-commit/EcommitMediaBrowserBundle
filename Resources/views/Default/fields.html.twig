@@ -1,7 +1,7 @@
 {% block form_widget %}
 {% spaceless %}
     <span {{ block('widget_container_attributes') }}>
-        {{ block('field_rows') }}
+        {{ block('form_rows') }}
         {{ form_rest(form) }}
     </span>
 {% endspaceless %}

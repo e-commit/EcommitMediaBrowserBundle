@@ -12,14 +12,15 @@
 namespace Ecommit\MediaBrowserBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class FolderType extends AbstractType
 {
     /**
      * {@inheritDoc} 
      */
-    function buildForm(FormBuilder $builder, array $options)
+    function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name');
     }
@@ -27,11 +28,11 @@ class FolderType extends AbstractType
     /**
      * {@inheritDoc} 
      */
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return array(
+        $resolver->setDefaults(array(
             'csrf_protection' => false,
-        );
+        ));
     }
     
     /**

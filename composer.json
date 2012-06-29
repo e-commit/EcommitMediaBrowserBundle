@@ -1,0 +1,19 @@
+{
+    "name": "ecommit/mediabrowser-bundle",
+    "description": "EcommitMediaBrowserBundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hubert Lecorche",
+            "email": "hlecorche@e-commit.fr"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "2.1.*"
+    },
+    "autoload": {
+        "psr-0": { "Ecommit\\MediaBrowserBundle": "" }
+    },
+    "target-dir": "Ecommit/MediaBrowserBundle"
+}

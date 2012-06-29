@@ -5,9 +5,9 @@
 
 {% block body %}
 
-{% if app.session.hasFlash('ecommitmediabrowser') %}
-    <script>alert("{{ app.session.flash('ecommitmediabrowser')|trans|e('js') }}");</script>
-{% endif %}
+{% for flashMessage in app.session.flashbag.get('ecommitmediabrowser') %}
+    <script>alert("{{ flashMessage|trans|e('js') }}");</script>
+{% endfor %}
 
 <div id="column-new-file">
     <form action="{{ path('ecommitmediabrowser_upload', {'dir': manager.requestDir}) }}" method="post" {{ form_enctype(form_file) }}>
