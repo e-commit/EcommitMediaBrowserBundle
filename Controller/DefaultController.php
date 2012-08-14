@@ -64,7 +64,7 @@ class DefaultController extends Controller
         
         if($request->getMethod() == 'POST')
         {
-            $form_file->bindRequest($request);
+            $form_file->bind($request);
             if($form_file->isValid())
             {
                 try
@@ -98,7 +98,7 @@ class DefaultController extends Controller
         
         if($request->getMethod() == 'POST')
         {
-            $form_folder->bindRequest($request);
+            $form_folder->bind($request);
             if($form_folder->isValid())
             {
                 try

@@ -21,7 +21,7 @@ class Folder
 {
     /**
      * @Assert\NotBlank()
-     * @Assert\MaxLength(20)
+     * @Assert\Length(max=20)
      * @Assert\Regex("/^[A-Za-z0-9\._-]+$/")
      */
     protected $name;
