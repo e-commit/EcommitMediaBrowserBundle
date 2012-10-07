@@ -27,5 +27,9 @@ class EcommitMediaBrowserExtension extends Extension
         
         $container->setParameter('ecommit_media_browser.root_dir', $config['root_dir']);
         $container->setParameter('ecommit_media_browser.tiny_mce_popup', $config['tiny_mce_popup']);
+        
+        $container->setParameter('assetic.bundles', array_merge(
+                        $container->getParameter('assetic.bundles'), array('EcommitMediaBrowserBundle')
+                ));
     }
 }

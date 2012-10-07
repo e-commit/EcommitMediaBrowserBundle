@@ -5,9 +5,14 @@
         <title>Media Browser</title>
         {{ jQuery_insert_js() }}
         <script type="text/javascript" src="{% render "EcommitMediaBrowserBundle:Default:header" %}"></script>
-        <script type="text/javascript" src="{{ asset('bundles/ecommitmediabrowser/js/tiny_mce_popup.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('bundles/ecommitmediabrowser/js/manager.js') }}"></script>
-        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/ecommitmediabrowser/css/manager.css') }}" />
+        {% javascripts filter='?yui_js' output='js/compiled/media-browser.js'
+            '@EcommitMediaBrowserBundle/Resources/public/js/tiny_mce_popup.js' 
+            '@EcommitMediaBrowserBundle/Resources/public/js/manager.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% stylesheets '@EcommitMediaBrowserBundle/Resources/public/css/manager.css' filter='?yui_css' output='css/compiled/media-browser.css' %}
+        <link rel="stylesheet" type="text/css" href="{{ asset_url }}" />
+        {% endstylesheets %}
     </head>
     <body>
             {% block body %}{% endblock %}
