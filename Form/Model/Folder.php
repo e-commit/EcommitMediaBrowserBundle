@@ -12,7 +12,7 @@
 namespace Ecommit\MediaBrowserBundle\Form\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContext;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 /**
  * @Assert\Callback(methods={"isFolderValid"}) 
@@ -43,7 +43,7 @@ class Folder
         $this->name = $name;
     }
     
-    public function isFolderValid(ExecutionContext $context)
+    public function isFolderValid(ExecutionContextInterface $context)
     {
         if(!empty($this->name))
         {

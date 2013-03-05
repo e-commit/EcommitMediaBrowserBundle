@@ -13,7 +13,7 @@ namespace Ecommit\MediaBrowserBundle\Form\Model;
 
 use Symfony\Component\HttpFoundation\File\File as SfFile;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContext;
+use Symfony\Component\Validator\ExecutionContextInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -44,7 +44,7 @@ class File
         $this->file = $file;
     }
     
-    public function isFileValid(ExecutionContext $context)
+    public function isFileValid(ExecutionContextInterface $context)
     {
         if($this->file instanceof UploadedFile)
         {
