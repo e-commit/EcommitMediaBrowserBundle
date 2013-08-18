@@ -11,27 +11,36 @@
 
 namespace Ecommit\MediaBrowserBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use JMS\SecurityExtraBundle\Annotation\Secure;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Ecommit\MediaBrowserBundle\Form\Model\File;
+use Ecommit\MediaBrowserBundle\Form\Model\Folder;
+use Ecommit\MediaBrowserBundle\Form\Type\FileType;
+use Ecommit\MediaBrowserBundle\Form\Type\FolderType;
 use Ecommit\MediaBrowserBundle\Manager\FileManager;
 use Ecommit\MediaBrowserBundle\Manager\MediaBrowserException;
-use Ecommit\MediaBrowserBundle\Form\Model\File;
-use Ecommit\MediaBrowserBundle\Form\Type\FileType;
-use Ecommit\MediaBrowserBundle\Form\Model\Folder;
-use Ecommit\MediaBrowserBundle\Form\Type\FolderType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DefaultController extends Controller
 {
+    protected function secure()
+    {
+        if(!$this->get('security.context')->isGranted('ROLE_USE_MEDIA_BROWSER'))
+        {
+            throw new AccessDeniedException();
+        }
+    }
+
+
     /**
      * @Route("/")
-     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function indexAction()
     {
+        $this->secure();
         return $this->redirect($this->generateUrl('ecommitmediabrowser_show'));
     }
     
@@ -39,10 +48,10 @@ class DefaultController extends Controller
      * @Route("/show/{dir}", name="ecommitmediabrowser_show", 
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
-     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function showAction($dir)
     {
+        $this->secure();
         $manager = $this->getManager($dir);
         $form_file = $this->getFormFile($manager);
         $form_folder = $this->getFormFolder($manager);
@@ -54,10 +63,10 @@ class DefaultController extends Controller
      * @Route("/upload/{dir}", name="ecommitmediabrowser_upload", 
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
-     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function uploadAction(Request $request, $dir)
     {
+        $this->secure();
         $manager = $this->getManager($dir);
         $form_file = $this->getFormFile($manager);
         $form_folder = $this->getFormFolder($manager);
@@ -88,10 +97,10 @@ class DefaultController extends Controller
      * @Route("/new_folder/{dir}", name="ecommitmediabrowser_new_folder", 
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
-     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function newFolderAction(Request $request, $dir)
     {
+        $this->secure();
         $manager = $this->getManager($dir);
         $form_file = $this->getFormFile($manager);
         $form_folder = $this->getFormFolder($manager);
@@ -120,10 +129,10 @@ class DefaultController extends Controller
     /**
      * @Route("/delete/{element}", name="ecommitmediabrowser_delete", 
      *      requirements={"element"=".+"})
-     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function deleteAction($element)
     {
+        $this->secure();
         $manager = $this->getManager();
         $dir = $manager->getRequestDir();
         try
@@ -143,10 +152,10 @@ class DefaultController extends Controller
     /**
      * @Route("/rename/{element}", name="ecommitmediabrowser_rename", 
      *      requirements={"element"=".+"})
-     * @Secure(roles="ROLE_USE_MEDIA_BROWSER")
      */
     public function renameAction(Request $request, $element)
     {
+        $this->secure();
         $new_name = $request->query->get('new_name', null);
         if(!$new_name || !\preg_match('/^[A-Za-z0-9\._-]+$/', $new_name))
         {
