@@ -73,17 +73,17 @@ class DefaultController extends Controller
         
         if($request->getMethod() == 'POST')
         {
-            $form_file->bind($request);
+            $form_file->handleRequest($request);
             if($form_file->isValid())
             {
                 try
                 {
                     $manager->upload($form_file->getData()->getFile());
-                    $this->get('session')->setFlash('ecommitmediabrowser', 'File uploaded');
+                    $this->get('session')->getFlashBag()->add('ecommitmediabrowser', 'File uploaded');
                 }
                 catch(MediaBrowserException $e)
                 {
-                    $this->get('session')->setFlash('ecommitmediabrowser', $e->getMessage());
+                    $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
                 }
                 
                 return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
@@ -107,7 +107,7 @@ class DefaultController extends Controller
         
         if($request->getMethod() == 'POST')
         {
-            $form_folder->bind($request);
+            $form_folder->handleRequest($request);
             if($form_folder->isValid())
             {
                 try
@@ -116,7 +116,7 @@ class DefaultController extends Controller
                 }
                 catch(MediaBrowserException $e)
                 {
-                    $this->get('session')->setFlash('ecommitmediabrowser', $e->getMessage());
+                    $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
                 }
                 
                 return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
@@ -144,7 +144,7 @@ class DefaultController extends Controller
         }
         catch(MediaBrowserException $e)
         {
-            $this->get('session')->setFlash('ecommitmediabrowser', $e->getMessage());
+            $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
         }
         return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
     }
@@ -173,7 +173,7 @@ class DefaultController extends Controller
         }
         catch(MediaBrowserException $e)
         {
-            $this->get('session')->setFlash('ecommitmediabrowser', $e->getMessage());
+            $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
         }
         return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
     }
