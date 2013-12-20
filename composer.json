@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=2.2.0,<2.4",
+        "symfony/framework-bundle": ">=2.2.0,<2.5",
         "ecommit/javascript-bundle": "1.4.*@dev"
     },
     "autoload": {
