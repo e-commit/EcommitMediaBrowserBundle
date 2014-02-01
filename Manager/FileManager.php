@@ -389,7 +389,10 @@ class FileManager
      */
     protected function isSecured($request_path)
     {
-        return \preg_match('/^'.\addslashes(\realpath($this->root_path)).'/', \realpath($request_path));
+        $root_path_escaped = addslashes(\realpath($this->root_path)); //Escape '  " and \ (not escape /)
+        $root_path_escaped = \str_replace('/', '\\/', $root_path_escaped); //Escape /
+        
+        return \preg_match('/^'.$root_path_escaped.'/', \realpath($request_path));
     }
     
     /**
