@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=2.2.0,<2.5",
-        "ecommit/javascript-bundle": "1.4.*@dev"
+        "symfony/framework-bundle": "~2.4.0",
+        "ecommit/javascript-bundle": "1.5.*@dev"
     },
     "autoload": {
         "psr-0": { "Ecommit\\MediaBrowserBundle": "" }
@@ -19,7 +19,7 @@
     "target-dir": "Ecommit/MediaBrowserBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev"
+            "dev-master": "1.5.x-dev"
         }
     }
 }

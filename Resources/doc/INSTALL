@@ -7,7 +7,7 @@
  ***************************************************
 
 * Install prerequisites:
-  - Symfony 2.2
+  - Symfony 2.4
   - EcommitJavascriptBundle branch (same version)
 
 * Add EcommitMediaBrowserBundle to your vendor dir
