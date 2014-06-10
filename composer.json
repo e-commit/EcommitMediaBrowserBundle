@@ -11,7 +11,8 @@
     ],
     "require": {
         "symfony/framework-bundle": "~2.4.0",
-        "ecommit/javascript-bundle": "1.5.*@dev"
+        "ecommit/javascript-bundle": "1.5.*@dev",
+        "ecommit/util-bundle": "1.5.*@dev"
     },
     "autoload": {
         "psr-0": { "Ecommit\\MediaBrowserBundle": "" }
