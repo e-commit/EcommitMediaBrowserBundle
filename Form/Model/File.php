@@ -13,11 +13,11 @@ namespace Ecommit\MediaBrowserBundle\Form\Model;
 
 use Symfony\Component\HttpFoundation\File\File as SfFile;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * @Assert\Callback(methods={"isFileValid"}) 
+ * @Assert\Callback(methods={"isFileValid"})
  */
 class File
 {
@@ -26,36 +26,35 @@ class File
      * @Assert\File()
      */
     protected $file;
-    
-    protected $request_path;
-    
-    public function __construct($request_path)
+
+    protected $requestPath;
+
+    public function __construct($requestPath)
     {
-        $this->request_path = $request_path;
+        $this->requestPath = $requestPath;
     }
-    
+
     public function getFile()
     {
         return $this->file;
     }
-    
+
     public function setFile(SfFile $file = null)
     {
         $this->file = $file;
     }
-    
+
     public function isFileValid(ExecutionContextInterface $context)
     {
-        if($this->file instanceof UploadedFile)
-        {
-            if(!preg_match('/^[A-Za-z0-9\._-]+$/', $this->file->getClientOriginalName()))
-            {
-                $context->addViolation('Incorrect filename', array(), null);
+        if ($this->file instanceof UploadedFile) {
+            if (!preg_match('/^[A-Za-z0-9\._-]+$/', $this->file->getClientOriginalName())) {
+                $context->buildViolation('Incorrect filename')
+                    ->addViolation();
             }
-            $path = \realpath($this->request_path.'/'.$this->file->getClientOriginalName());
-            if($path && \file_exists($path))
-            {
-                $context->addViolation('The file already exists', array(), null);
+            $path = \realpath($this->requestPath . '/' . $this->file->getClientOriginalName());
+            if ($path && \file_exists($path)) {
+                $context->buildViolation('The file already exists')
+                    ->addViolation();
             }
         }
     }

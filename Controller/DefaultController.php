@@ -28,8 +28,7 @@ class DefaultController extends Controller
 {
     protected function secure()
     {
-        if(!$this->get('security.context')->isGranted('ROLE_USE_MEDIA_BROWSER'))
-        {
+        if (!$this->get('security.context')->isGranted('ROLE_USE_MEDIA_BROWSER')) {
             throw new AccessDeniedException();
         }
     }
@@ -41,11 +40,12 @@ class DefaultController extends Controller
     public function indexAction()
     {
         $this->secure();
+
         return $this->redirect($this->generateUrl('ecommitmediabrowser_show'));
     }
-    
+
     /**
-     * @Route("/show/{dir}", name="ecommitmediabrowser_show", 
+     * @Route("/show/{dir}", name="ecommitmediabrowser_show",
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
      */
@@ -53,14 +53,18 @@ class DefaultController extends Controller
     {
         $this->secure();
         $manager = $this->getManager($dir);
-        $form_file = $this->getFormFile($manager);
-        $form_folder = $this->getFormFolder($manager);
-        
-        return array('manager' => $manager, 'form_file' => $form_file->createView(), 'form_folder' => $form_folder->createView());
+        $formFile = $this->getFormFile($manager);
+        $formFolder = $this->getFormFolder($manager);
+
+        return array(
+            'manager' => $manager,
+            'form_file' => $formFile->createView(),
+            'form_folder' => $formFolder->createView()
+        );
     }
-    
+
     /**
-     * @Route("/upload/{dir}", name="ecommitmediabrowser_upload", 
+     * @Route("/upload/{dir}", name="ecommitmediabrowser_upload",
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
      */
@@ -68,33 +72,32 @@ class DefaultController extends Controller
     {
         $this->secure();
         $manager = $this->getManager($dir);
-        $form_file = $this->getFormFile($manager);
-        $form_folder = $this->getFormFolder($manager);
-        
-        if($request->getMethod() == 'POST')
-        {
-            $form_file->handleRequest($request);
-            if($form_file->isValid())
-            {
-                try
-                {
-                    $manager->upload($form_file->getData()->getFile());
+        $formFile = $this->getFormFile($manager);
+        $formFolder = $this->getFormFolder($manager);
+
+        if ($request->getMethod() == 'POST') {
+            $formFile->handleRequest($request);
+            if ($formFile->isValid()) {
+                try {
+                    $manager->upload($formFile->getData()->getFile());
                     $this->get('session')->getFlashBag()->add('ecommitmediabrowser', 'File uploaded');
-                }
-                catch(MediaBrowserException $e)
-                {
+                } catch (MediaBrowserException $e) {
                     $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
                 }
-                
+
                 return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
             }
         }
-        
-        return array('manager' => $manager, 'form_file' => $form_file->createView(), 'form_folder' => $form_folder->createView());
+
+        return array(
+            'manager' => $manager,
+            'form_file' => $formFile->createView(),
+            'form_folder' => $formFolder->createView()
+        );
     }
-    
+
     /**
-     * @Route("/new_folder/{dir}", name="ecommitmediabrowser_new_folder", 
+     * @Route("/new_folder/{dir}", name="ecommitmediabrowser_new_folder",
      *      defaults={"dir"=""}, requirements={"dir"=".+"})
      * @Template("EcommitMediaBrowserBundle:Default:index.html.twig")
      */
@@ -102,32 +105,31 @@ class DefaultController extends Controller
     {
         $this->secure();
         $manager = $this->getManager($dir);
-        $form_file = $this->getFormFile($manager);
-        $form_folder = $this->getFormFolder($manager);
-        
-        if($request->getMethod() == 'POST')
-        {
-            $form_folder->handleRequest($request);
-            if($form_folder->isValid())
-            {
-                try
-                {
-                    $manager->createFolder($form_folder->getData()->getName());
-                }
-                catch(MediaBrowserException $e)
-                {
+        $formFile = $this->getFormFile($manager);
+        $formFolder = $this->getFormFolder($manager);
+
+        if ($request->getMethod() == 'POST') {
+            $formFolder->handleRequest($request);
+            if ($formFolder->isValid()) {
+                try {
+                    $manager->createFolder($formFolder->getData()->getName());
+                } catch (MediaBrowserException $e) {
                     $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
                 }
-                
+
                 return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
             }
         }
-        
-        return array('manager' => $manager, 'form_file' => $form_file->createView(), 'form_folder' => $form_folder->createView());
+
+        return array(
+            'manager' => $manager,
+            'form_file' => $formFile->createView(),
+            'form_folder' => $formFolder->createView()
+        );
     }
-    
+
     /**
-     * @Route("/delete/{element}", name="ecommitmediabrowser_delete", 
+     * @Route("/delete/{element}", name="ecommitmediabrowser_delete",
      *      requirements={"element"=".+"})
      */
     public function deleteAction($element)
@@ -135,77 +137,73 @@ class DefaultController extends Controller
         $this->secure();
         $manager = $this->getManager();
         $dir = $manager->getRequestDir();
-        try
-        {
+        try {
             $element = $this->getElement($element);
-            $parent_path = $this->getParentElementPath($element);
-            $dir = $manager->getRelativeDir($parent_path);
+            $parentPath = $this->getParentElementPath($element);
+            $dir = $manager->getRelativeDir($parentPath);
             $manager->delete($element);
-        }
-        catch(MediaBrowserException $e)
-        {
+        } catch (MediaBrowserException $e) {
             $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
         }
+
         return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
     }
-    
+
     /**
-     * @Route("/rename/{element}", name="ecommitmediabrowser_rename", 
+     * @Route("/rename/{element}", name="ecommitmediabrowser_rename",
      *      requirements={"element"=".+"})
      */
     public function renameAction(Request $request, $element)
     {
         $this->secure();
         $new_name = $request->query->get('new_name', null);
-        if(!$new_name || !\preg_match('/^[A-Za-z0-9\._-]+$/', $new_name))
-        {
+        if (!$new_name || !\preg_match('/^[A-Za-z0-9\._-]+$/', $new_name)) {
             throw $this->createNotFoundException('Bad value');
         }
-        
+
         $manager = $this->getManager();
         $dir = $manager->getRequestDir();
-        try
-        {
+        try {
             $element = $this->getElement($element);
-            $parent_path = $this->getParentElementPath($element);
-            $dir = $manager->getRelativeDir($parent_path);
+            $parentPath = $this->getParentElementPath($element);
+            $dir = $manager->getRelativeDir($parentPath);
             $manager->rename($element, $new_name);
-        }
-        catch(MediaBrowserException $e)
-        {
+        } catch (MediaBrowserException $e) {
             $this->get('session')->getFlashBag()->add('ecommitmediabrowser', $e->getMessage());
         }
+
         return $this->redirect($this->generateUrl('ecommitmediabrowser_show', array('dir' => $dir)));
     }
-    
+
+    /**
+     * @Template("EcommitMediaBrowserBundle::header.html.twig")
+     */
     public function headerAction()
     {
-        $this->get('ecommit_javascript.manager')->enablejQuery();
-        
-        $tiny_mce_popup = $this->container->getParameter('ecommit_media_browser.tiny_mce_popup');
-        return new Response($this->get('templating.helper.assets')->getUrl($tiny_mce_popup));
+        return array(
+            'tiny_mce_popup_js' => $this->container->getParameter('ecommit_media_browser.tiny_mce_popup'),
+            'jquery_js' => $this->container->getParameter('ecommit_media_browser.jquery'),
+        );
     }
-    
+
     /**
      * Returns manager
-     * 
+     *
      * @param string $dir
      * @return Ecommit\MediaBrowserBundle\Manager\FileManager
      */
     protected function getManager($dir = null)
     {
         $manager = $this->get('ecommit_media_browser.manager');
-        try
-        {
+        try {
             $manager->setRequestDir($dir);
-        }
-        catch(MediaBrowserException $e)
-        {
+        } catch (MediaBrowserException $e) {
             throw $this->createNotFoundException($e->getMessage());
         }
+
         return $manager;
     }
-    
+
     /**
      * Returns File Form
      * @param Ecommit\MediaBrowserBundle\Manager\FileManager $manager
@@ -215,7 +213,7 @@ class DefaultController extends Controller
     {
         return $this->createForm(new FileType(), new File($manager->getRequestPath()));
     }
-    
+
     /**
      * Returns Folder Form
      * @param Ecommit\MediaBrowserBundle\Manager\FileManager $manager
@@ -225,7 +223,7 @@ class DefaultController extends Controller
     {
         return $this->createForm(new FolderType(), new Folder($manager->getRequestPath()));
     }
-    
+
     /**
      * Returns SplFileInfo
      * @param string $path
@@ -234,31 +232,27 @@ class DefaultController extends Controller
     protected function getElement($path)
     {
         $manager = $this->getManager();
-        if(!$manager->elementExists($path, true))
-        {
+        if (!$manager->elementExists($path, true)) {
             throw $this->createNotFoundException('Element does not exist');
         }
-        $element_path = \realpath(\sprintf('%s/%s', $manager->getRootPath(), $path));
-        if($element_path == $manager->getRootPath())
-        {
+        $elementPath = \realpath(\sprintf('%s/%s', $manager->getRootPath(), $path));
+        if ($elementPath == $manager->getRootPath()) {
             throw $this->createNotFoundException('Impossible to access root path');
         }
-        return new \SplFileInfo($element_path);
+
+        return new \SplFileInfo($elementPath);
     }
-    
+
     /**
      * Returns parent element path
      * @param \SplFileInfo $element
-     * @return string 
+     * @return string
      */
     protected function getParentElementPath(\SplFileInfo $element)
     {
-        if($element->isDir())
-        {
+        if ($element->isDir()) {
             return \realpath(sprintf('%s/../', $element->getPathname()));
-        }
-        else
-        {
+        } else {
             return $element->getPath();
         }
     }

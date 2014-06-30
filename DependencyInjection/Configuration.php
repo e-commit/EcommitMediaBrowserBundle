@@ -22,8 +22,9 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('root_dir')->isRequired()->end()
-                ->scalarNode('tiny_mce_popup')->isRequired()->end()
+                ->scalarNode('root_dir')->isRequired()->cannotBeEmpty()->end()
+                ->scalarNode('tiny_mce_popup')->isRequired()->cannotBeEmpty()->end()
+                ->scalarNode('jquery')->isRequired()->cannotBeEmpty()->end()
             ->end()
         ;
 

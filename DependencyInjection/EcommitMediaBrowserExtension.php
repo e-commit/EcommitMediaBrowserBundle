@@ -22,14 +22,19 @@ class EcommitMediaBrowserExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
-        
+
         $container->setParameter('ecommit_media_browser.root_dir', $config['root_dir']);
         $container->setParameter('ecommit_media_browser.tiny_mce_popup', $config['tiny_mce_popup']);
-        
-        $container->setParameter('assetic.bundles', array_merge(
-                        $container->getParameter('assetic.bundles'), array('EcommitMediaBrowserBundle')
-                ));
+        $container->setParameter('ecommit_media_browser.jquery', $config['jquery']);
+
+        $container->setParameter(
+            'assetic.bundles',
+            array_merge(
+                $container->getParameter('assetic.bundles'),
+                array('EcommitMediaBrowserBundle')
+            )
+        );
     }
 }

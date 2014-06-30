@@ -17,434 +17,405 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class FileManager
 {
-    protected $root_path;
-    
-    protected $root_dir;
-    
-    protected $request_path;
-    
-    protected $request_dir = null;
-    
-    protected $parent_dir = null;
-    
-    protected $is_root = true;
+    protected $rootPath;
+
+    protected $rootDir;
+
+    protected $requestPath;
+
+    protected $requestDir = null;
+
+    protected $parentDir = null;
+
+    protected $isRoot = true;
 
     /**
      * Constructor
-     * 
-     * @param string $root_dir  The root dir
-     * @param string $kernel_root_dir  The root dir
-     * @throws MediaBrowserException 
+     *
+     * @param string $rootDir The root dir
+     * @param string $kernelRootDir The root dir
+     * @throws MediaBrowserException
      */
-    public function __construct($root_dir, $kernel_root_dir)
+    public function __construct($rootDir, $kernelRootDir)
     {
-        $root_dir = \str_replace('\\', '/', $root_dir);
-        if(\substr($root_dir, 0, 1) == '/')
-        {
-            $root_dir = \substr($root_dir, 1);
+        $rootDir = \str_replace('\\', '/', $rootDir);
+        if (\substr($rootDir, 0, 1) == '/') {
+            $rootDir = \substr($rootDir, 1);
         }
-        if(\substr($root_dir, -1) != '/')
-        {
-            $root_dir = $root_dir.'/';
+        if (\substr($rootDir, -1) != '/') {
+            $rootDir = $rootDir . '/';
         }
-        
-        $root_path = \realpath($kernel_root_dir.'/../web/'.$root_dir);
-        if(!\is_dir($root_path))
-        {
+
+        $rootPath = \realpath($kernelRootDir . '/../web/' . $rootDir);
+        if (!\is_dir($rootPath)) {
             throw new MediaBrowserException('Bad root path');
         }
-        
-        $this->root_path = $root_path;
-        $this->request_path = $root_path;
-        $this->root_dir = $root_dir;
+
+        $this->rootPath = $rootPath;
+        $this->requestPath = $rootPath;
+        $this->rootDir = $rootDir;
     }
-    
+
     /**
      * Sets the request directory
-     * 
-     * @param string $request_dir  The resquest directory
-     * @throws MediaBrowserException 
+     *
+     * @param string $requestDir The resquest directory
+     * @throws MediaBrowserException
      */
-    public function setRequestDir($request_dir)
+    public function setRequestDir($requestDir)
     {
-        if(empty($request_dir))
-        {
+        if (empty($requestDir)) {
             return;
         }
-        
-        $request_path = \realpath(sprintf('%s/%s', $this->root_path, $request_dir));
-        if($request_path == $this->root_path)
-        {
+
+        $requestPath = \realpath(sprintf('%s/%s', $this->rootPath, $requestDir));
+        if ($requestPath == $this->rootPath) {
             return;
         }
-        if($request_path && $this->isSecured($request_path) && \is_dir($request_path))
-        {
-            $this->request_path = $request_path;
-            $this->request_dir = $this->getRelativeDir($request_path);
-            $parent_path = \realpath(sprintf('%s/../', $request_path));
-            $this->parent_dir = $this->getRelativeDir($parent_path);
-            $this->is_root = false;
+        if ($requestPath && $this->isSecured($requestPath) && \is_dir($requestPath)) {
+            $this->requestPath = $requestPath;
+            $this->requestDir = $this->getRelativeDir($requestPath);
+            $parentPath = \realpath(sprintf('%s/../', $requestPath));
+            $this->parentDir = $this->getRelativeDir($parentPath);
+            $this->isRoot = false;
+
             return true;
         }
         throw new MediaBrowserException('Bad path');
     }
-    
+
     /**
      * Gets the root path
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public function getRootPath()
     {
-        return $this->root_path;
+        return $this->rootPath;
     }
-    
+
     /**
      * Gets the root directory (relative path to web dir)
      * Begins without slash and ends with slash
-     * 
+     *
      * @return string
      */
     public function getRootDir()
     {
-        return $this->root_dir;
+        return $this->rootDir;
     }
-    
+
     /**
      * Gets the request dir (relative path to root dir)
      * Begins without slash and ends with slash
-     * 
+     *
      * @return string
      */
     public function getRequestDir()
     {
-        return $this->request_dir;
+        return $this->requestDir;
     }
-    
+
     /**
      * Gets the parent dir (relative path to root dir)
      * Begins without slash and ends with slash
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public function getParentDir()
     {
-        return $this->parent_dir;
+        return $this->parentDir;
     }
-    
+
     /**
      * Gets the request path
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public function getRequestPath()
     {
-        return $this->request_path;
+        return $this->requestPath;
     }
     
     /**
      * Returns true if request dir is root
-     * 
-     * @return bool 
+     *
+     * @return bool
      */
     public function isRoot()
     {
-        return $this->is_root;
+        return $this->isRoot;
     }
-    
+
     /**
      * Get folders inside request dir
-     * 
-     * @return Finder 
+     *
+     * @return Finder
      */
     public function getFolders()
     {
         $finder = new Finder();
+
         return $finder->directories()
-                ->in($this->request_path)
-                ->depth('== 0')
-                ->sortByName();
+            ->in($this->requestPath)
+            ->depth('== 0')
+            ->sortByName();
     }
-    
+
     /**
      * Get files inside request dir
-     * 
-     * @return Finder 
+     *
+     * @return Finder
      */
     public function getFiles()
     {
         $finder = new Finder();
+
         return $finder->files()
-                ->in($this->request_path)
-                ->depth('== 0')
-                ->sortByName();
+            ->in($this->requestPath)
+            ->depth('== 0')
+            ->sortByName();
     }
-    
+
     /**
      * Get files inside request dir. The result is an array:
      *      - file, the SplFileInfo object
      *      - is_image, true is file is an image
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function getFilesWithType()
     {
         $files = array();
         $finfo = \finfo_open(\FILEINFO_MIME_TYPE);
-        foreach($this->getFiles() as $file)
-        {
+        foreach ($this->getFiles() as $file) {
             $tmp['file'] = $file;
-            $mime_type = \finfo_file($finfo, $file->getPathname());
-            $tmp['is_image'] = \preg_match('/^image\//', $mime_type);
+            $mimeType = \finfo_file($finfo, $file->getPathname());
+            $tmp['is_image'] = \preg_match('/^image\//', $mimeType);
             $files[] = $tmp;
         }
+
         return $files;
     }
-    
+
     /**
      * Returns true if element exists and is inside root path
-     * 
-     * @param string $element_name  Element name
-     * @param bool $full_path  True if element name is a full path
-     * @return boolean 
+     *
+     * @param string $elementName Element name
+     * @param bool $fullPath True if element name is a full path
+     * @return boolean
      */
-    public function elementExists($element_name, $full_path = false)
+    public function elementExists($elementName, $fullPath = false)
     {
-        if($full_path)
-        {
-            $element_path = \realpath(sprintf('%s/%s', $this->root_path, $element_name));
+        if ($fullPath) {
+            $elementPath = \realpath(sprintf('%s/%s', $this->rootPath, $elementName));
+        } else {
+            $elementPath = \realpath(\sprintf('%s/%s', $this->requestPath, $elementName));
         }
-        else
-        {
-            $element_path = \realpath(\sprintf('%s/%s', $this->request_path, $element_name));
+
+        if ($elementPath && $this->isSecured($elementPath)) {
+            return \file_exists($elementPath);
         }
-        
-        if($element_path && $this->isSecured($element_path))
-        {
-            return \file_exists($element_path);
-        }
+
         return false;
     }
-    
+
     /**
      * Uploads new file
-     * Warning: 
+     * Warning:
      *      - The new file must not exist
      *      - The filename must be correct
-     * 
+     *
      * @param UploadedFile $file
-     * @throws MediaBrowserException 
+     * @throws MediaBrowserException
      */
     public function upload(UploadedFile $file)
     {
-        try
-        {
-            if(\is_writable($this->request_path))
-            {
-                $file->move($this->request_path, $file->getClientOriginalName());
-                $path = \realpath(\sprintf('%s/%s', $this->request_path, $file->getClientOriginalName()));
+        try {
+            if (\is_writable($this->requestPath)) {
+                $file->move($this->requestPath, $file->getClientOriginalName());
+                $path = \realpath(\sprintf('%s/%s', $this->requestPath, $file->getClientOriginalName()));
                 @\chmod($path, 0777);
-            }
-            else
-            {
+            } else {
                 throw new MediaBrowserException('The folder is not writable');
             }
-        }
-        catch(FileException $e)
-        {
+        } catch (FileException $e) {
             throw new MediaBrowserException($e->getMessage());
         }
     }
-    
+
     /**
      * Creates new folder
      * Warning:
      *      - The new folder must not exist
      *      - The folder name must  be correct
-     * 
-     * @param string $folder_name  The folder name
-     * @throws MediaBrowserException 
+     *
+     * @param string $folderName The folder name
+     * @throws MediaBrowserException
      */
-    public function createFolder($folder_name)
+    public function createFolder($folderName)
     {
-        $path = \sprintf('%s/%s', $this->request_path, $folder_name);
-        if(!\realpath($path))
-        {
-            if(\is_writable($this->request_path))
-            {
-                if(!@\mkdir($path, 0777))
-                {
+        $path = \sprintf('%s/%s', $this->requestPath, $folderName);
+        if (!\realpath($path)) {
+            if (\is_writable($this->requestPath)) {
+                if (!@\mkdir($path, 0777)) {
                     throw new MediaBrowserException('Error during the folder creation process');
                 }
-            }
-            else
-            {
+            } else {
                 throw new MediaBrowserException('The folder is not writable');
             }
         }
     }
-    
+
     /**
      * Returns SplFileInfo object if it exists and is inside root path
-     * 
-     * @param string $element_path  Element path
+     *
+     * @param string $elementPath Element path
      * @return \SplFileInfo
-     * @throws MediaBrowserException 
+     * @throws MediaBrowserException
      */
-    public function getElement($element_path)
+    public function getElement($elementPath)
     {
-        if($this->elementExists($element_path, true))
-        {
-            $element_path = \realpath(\sprintf('%s/%s', $this->root_path, $element_path));
-            return new \SplFileInfo($element_path);
+        if ($this->elementExists($elementPath, true)) {
+            $elementPath = \realpath(\sprintf('%s/%s', $this->rootPath, $elementPath));
+
+            return new \SplFileInfo($elementPath);
         }
         throw new MediaBrowserException('Element does not exist');
     }
-    
+
     /**
      * Returns web url
-     * 
+     *
      * @param \SplFileInfo
-     * @return type 
+     * @return type
      */
     public function getUrlElement(\SplFileInfo $file)
     {
-        return $this->root_dir.$this->getRelativeFile($file->getPathname());
+        return $this->rootDir . $this->getRelativeFile($file->getPathname());
     }
-    
+
     /**
      * Renames an element
      * Warning:
      *      - The element must be inside root path
      *      - The new name must not exist
      *      - The new name must be correct
-     * 
+     *
      * @param \SplFileInfo $element
-     * @param string $new_name
-     * @throws MediaBrowserException 
+     * @param string $newName
+     * @throws MediaBrowserException
      */
-    public function rename(\SplFileInfo $element, $new_name)
+    public function rename(\SplFileInfo $element, $newName)
     {
-        if($element->getPathname() == $this->root_path)
-        {
+        if ($element->getPathname() == $this->rootPath) {
             throw new MediaBrowserException('Impossible to rename root path');
         }
-        if($element->isDir())
-        {
+        if ($element->isDir()) {
             //Dir
-            $parent_path = \realpath(\sprintf('%s/../', $element->getPathname()));
-        }
-        else
-        {
+            $parentPath = \realpath(\sprintf('%s/../', $element->getPathname()));
+        } else {
             //File
-            $parent_path = $element->getPath();
+            $parentPath = $element->getPath();
         }
-        $new_path = \sprintf('%s/%s', $parent_path, $new_name);
-        if(\file_exists($new_path))
-        {
+        $newPath = \sprintf('%s/%s', $parentPath, $newName);
+        if (\file_exists($newPath)) {
             throw new MediaBrowserException('The element already exists');
         }
-        if(!@\rename($element->getPathname(), $new_path))
-        {
+        if (!@\rename($element->getPathname(), $newPath)) {
             throw new MediaBrowserException('Impossible to rename element');
         }
     }
-    
+
     /**
      * Deletes the element
      * Warning, the element must be inside the root path
-     * 
+     *
      * @param \SplFileInfo $element
-     * @throws MediaBrowserException 
+     * @throws MediaBrowserException
      */
     public function delete(\SplFileInfo $element)
     {
-        if($element->getPathname() == $this->root_path)
-        {
+        if ($element->getPathname() == $this->rootPath) {
             throw new MediaBrowserException('Impossible to delete root path');
         }
-        if($element->isDir())
-        {
+        if ($element->isDir()) {
             //Dir
-            if(!$this->deleteRecursive($element))
-            {
+            if (!$this->deleteRecursive($element)) {
                 throw new MediaBrowserException('Impossible to delete element');
             }
-        }
-        else
-        {
+        } else {
             //File
-            if(!@\unlink($element->getPathname()))
-            {
+            if (!@\unlink($element->getPathname())) {
                 throw new MediaBrowserException('Impossible to delete element');
             }
         }
     }
-    
+
     /**
      * Returns true is element is secured (inside the root path)
-     * 
-     * @param string $request_path
-     * @return bool 
+     *
+     * @param string $requestPath
+     * @return bool
      */
-    protected function isSecured($request_path)
+    protected function isSecured($requestPath)
     {
-        $root_path_escaped = addslashes(\realpath($this->root_path)); //Escape '  " and \ (not escape /)
-        $root_path_escaped = \str_replace('/', '\\/', $root_path_escaped); //Escape /
-        
-        return \preg_match('/^'.$root_path_escaped.'/', \realpath($request_path));
+        $rootPathEscaped = addslashes(\realpath($this->rootPath)); //Escape '  " and \ (not escape /)
+        $rootPathEscaped = \str_replace('/', '\\/', $rootPathEscaped); //Escape /
+
+        return \preg_match('/^' . $rootPathEscaped . '/', \realpath($requestPath));
     }
-    
+
     /**
      * Gets the relative dir
-     * 
-     * @param string $request_path
-     * @return null|string 
+     *
+     * @param string $requestPath
+     * @return null|string
      */
-    public function getRelativeDir($request_path)
+    public function getRelativeDir($requestPath)
     {
-        if($request_path == $this->root_path)
-        {
+        if ($requestPath == $this->rootPath) {
             return null;
         }
-        
-        $relative_dir = \str_replace($this->root_path.DIRECTORY_SEPARATOR, '', $request_path);
-        $relative_dir = \str_replace('\\', '/', $relative_dir).'/';
-        return $relative_dir;
+
+        $relativeDir = \str_replace($this->rootPath . DIRECTORY_SEPARATOR, '', $requestPath);
+        $relativeDir = \str_replace('\\', '/', $relativeDir) . '/';
+
+        return $relativeDir;
     }
-    
+
     /**
      * Gets the relative file
-     * 
-     * @param string $request_path
-     * @return string 
+     *
+     * @param string $requestPath
+     * @return string
      */
-    protected function getRelativeFile($request_path)
+    protected function getRelativeFile($requestPath)
     {
-        $relative_file = \str_replace($this->root_path.DIRECTORY_SEPARATOR, '', $request_path);
-        $relative_file = \str_replace('\\', '/', $relative_file);
-        return $relative_file;
+        $relativeFile = \str_replace($this->rootPath . DIRECTORY_SEPARATOR, '', $requestPath);
+        $relativeFile = \str_replace('\\', '/', $relativeFile);
+
+        return $relativeFile;
     }
-    
+
     /**
      * Delete a folder
-     * 
-     * @param \SplFileInfo $dir 
+     *
+     * @param \SplFileInfo $dir
      */
     protected function deleteRecursive(\SplFileInfo $dir)
     {
         $finder = new Finder();
         $files = $finder->files()->in($dir->getPathname());
-        foreach($files as $file)
-        {
+        foreach ($files as $file) {
             @\unlink($file);
         }
         $finder = new Finder();
         $folders = \iterator_to_array($finder->directories()->in($dir->getPathname()));
-        foreach(\array_reverse($folders) as $folder)
-        {
+        foreach (\array_reverse($folders) as $folder) {
             @\rmdir($folder);
         }
+
         return @\rmdir($dir);
     }
 }

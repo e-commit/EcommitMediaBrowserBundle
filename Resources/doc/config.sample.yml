@@ -3,3 +3,5 @@ ecommit_media_browser:
     root_dir: datas
     #Chemin du fichier Javascript popup TinyMCE 
     tiny_mce_popup: js/tiny_mce/tiny_mce_popup.js
+    #Chemin du fichier Javascript jQuery
+    jquery: js/jQuery/jquery.min.js

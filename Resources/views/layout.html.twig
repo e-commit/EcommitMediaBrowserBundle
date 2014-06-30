@@ -3,8 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Media Browser</title>
-        {{ jQuery_insert_js() }}
-        <script type="text/javascript" src="{{ render(controller("EcommitMediaBrowserBundle:Default:header")) }}"></script>
+        {{ render(controller("EcommitMediaBrowserBundle:Default:header")) }}
         {% javascripts filter='?yui_js' output='js/compiled/media-browser.js'
             '@EcommitMediaBrowserBundle/Resources/public/js/tiny_mce_popup.js' 
             '@EcommitMediaBrowserBundle/Resources/public/js/manager.js' %}

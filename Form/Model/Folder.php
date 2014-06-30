@@ -12,10 +12,10 @@
 namespace Ecommit\MediaBrowserBundle\Form\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * @Assert\Callback(methods={"isFolderValid"}) 
+ * @Assert\Callback(methods={"isFolderValid"})
  */
 class Folder
 {
@@ -25,32 +25,31 @@ class Folder
      * @Assert\Regex("/^[A-Za-z0-9\._-]+$/")
      */
     protected $name;
-    
-    protected $request_path;
-    
-    public function __construct($request_path)
+
+    protected $requestPath;
+
+    public function __construct($requestPath)
     {
-        $this->request_path = $request_path;
+        $this->requestPath = $requestPath;
     }
-    
+
     public function getName()
     {
         return $this->name;
     }
-    
+
     public function setName($name)
     {
         $this->name = $name;
     }
-    
+
     public function isFolderValid(ExecutionContextInterface $context)
     {
-        if(!empty($this->name))
-        {
-            $path = \realpath($this->request_path.'/'.$this->name);
-            if($path && \file_exists($path))
-            {
-                $context->addViolation('The folder already exists', array(), null);
+        if (!empty($this->name)) {
+            $path = \realpath($this->requestPath . '/' . $this->name);
+            if ($path && \file_exists($path)) {
+                $context->buildViolation('The folder already exists')
+                    ->addViolation();
             }
         }
     }

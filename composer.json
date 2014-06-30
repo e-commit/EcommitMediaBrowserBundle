@@ -6,13 +6,11 @@
     "authors": [
         {
             "name": "Hubert Lecorche",
-            "email": "hlecorche@e-commit.fr"
+            "email": "contact@e-commit.fr"
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.4.0",
-        "ecommit/javascript-bundle": "1.5.*@dev",
-        "ecommit/util-bundle": "1.5.*@dev"
+        "symfony/framework-bundle": "~2.5.0"
     },
     "autoload": {
         "psr-0": { "Ecommit\\MediaBrowserBundle": "" }
@@ -20,7 +18,7 @@
     "target-dir": "Ecommit/MediaBrowserBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.5.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }
