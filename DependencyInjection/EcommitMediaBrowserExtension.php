@@ -26,7 +26,6 @@ class EcommitMediaBrowserExtension extends Extension
         $loader->load('services.xml');
 
         $container->setParameter('ecommit_media_browser.root_dir', $config['root_dir']);
-        $container->setParameter('ecommit_media_browser.tiny_mce_popup', $config['tiny_mce_popup']);
         $container->setParameter('ecommit_media_browser.jquery', $config['jquery']);
 
         $container->setParameter(

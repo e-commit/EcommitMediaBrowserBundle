@@ -4,16 +4,16 @@ var ecommitFileBrowserDialogue = {
     },
     
     submit : function (url) {
-        var win = tinyMCEPopup.getWindowArg("window");
-        win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = url;
+        var args = top.tinymce.activeEditor.windowManager.getParams();
+        var win = (args.window);
+        var input = (args.input);
+        win.document.getElementById(input).value = url;
         if (typeof(win.ImageDialog) != "undefined") {
             if (win.ImageDialog.getImageData)
                 win.ImageDialog.getImageData();
             if (win.ImageDialog.showPreviewImage)
                 win.ImageDialog.showPreviewImage(url);
         }
-        tinyMCEPopup.close();
+        top.tinymce.activeEditor.windowManager.close();
     }
 };
-
-tinyMCEPopup.onInit.add(ecommitFileBrowserDialogue.init, ecommitFileBrowserDialogue);

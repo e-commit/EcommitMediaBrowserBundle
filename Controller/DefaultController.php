@@ -180,7 +180,6 @@ class DefaultController extends Controller
     public function headerAction()
     {
         return array(
-            'tiny_mce_popup_js' => $this->container->getParameter('ecommit_media_browser.tiny_mce_popup'),
             'jquery_js' => $this->container->getParameter('ecommit_media_browser.jquery'),
         );
     }
