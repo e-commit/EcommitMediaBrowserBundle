@@ -11,6 +11,7 @@
 
 namespace Ecommit\MediaBrowserBundle\Manager;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -28,6 +29,11 @@ class FileManager
     protected $parentDir = null;
 
     protected $isRoot = true;
+
+    /**
+     * @var Filesystem
+     */
+    protected $fileSystem;
 
     /**
      * Constructor
@@ -54,6 +60,7 @@ class FileManager
         $this->rootPath = $rootPath;
         $this->requestPath = $rootPath;
         $this->rootDir = $rootDir;
+        $this->fileSystem = new Filesystem();
     }
 
     /**
@@ -235,7 +242,7 @@ class FileManager
             if (\is_writable($this->requestPath)) {
                 $file->move($this->requestPath, $file->getClientOriginalName());
                 $path = \realpath(\sprintf('%s/%s', $this->requestPath, $file->getClientOriginalName()));
-                @\chmod($path, 0777);
+                $this->fileSystem->chmod($path, 0777);
             } else {
                 throw new MediaBrowserException('The folder is not writable');
             }
@@ -258,7 +265,9 @@ class FileManager
         $path = \sprintf('%s/%s', $this->requestPath, $folderName);
         if (!\realpath($path)) {
             if (\is_writable($this->requestPath)) {
-                if (!@\mkdir($path, 0777)) {
+                try {
+                    $this->fileSystem->mkdir($path, 0777);
+                } catch(\Exception $e) {
                     throw new MediaBrowserException('Error during the folder creation process');
                 }
             } else {
@@ -322,7 +331,9 @@ class FileManager
         if (\file_exists($newPath)) {
             throw new MediaBrowserException('The element already exists');
         }
-        if (!@\rename($element->getPathname(), $newPath)) {
+        try {
+            $this->fileSystem->rename($element->getPathname(), $newPath);
+        } catch (\Exception $e) {
             throw new MediaBrowserException('Impossible to rename element');
         }
     }
@@ -346,7 +357,9 @@ class FileManager
             }
         } else {
             //File
-            if (!@\unlink($element->getPathname())) {
+            try {
+                $this->fileSystem->remove($element->getPathname());
+            } catch (\Exception $e) {
                 throw new MediaBrowserException('Impossible to delete element');
             }
         }
@@ -408,14 +421,16 @@ class FileManager
         $finder = new Finder();
         $files = $finder->files()->in($dir->getPathname());
         foreach ($files as $file) {
-            @\unlink($file);
+            $this->fileSystem->remove($file);
         }
         $finder = new Finder();
         $folders = \iterator_to_array($finder->directories()->in($dir->getPathname()));
         foreach (\array_reverse($folders) as $folder) {
-            @\rmdir($folder);
+            $this->fileSystem->remove($folder);
         }
 
-        return @\rmdir($dir);
+        $this->fileSystem->remove($dir);
+
+        return true;
     }
 }
