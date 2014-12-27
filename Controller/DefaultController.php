@@ -27,7 +27,7 @@ class DefaultController extends Controller
 {
     protected function secure()
     {
-        if (!$this->get('security.context')->isGranted('ROLE_USE_MEDIA_BROWSER')) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_USE_MEDIA_BROWSER')) {
             throw new AccessDeniedException();
         }
     }

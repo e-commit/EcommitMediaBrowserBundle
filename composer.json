@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=2.5.2, <2.7",
+        "symfony/framework-bundle": ">=2.6.0, <2.7",
         "twig/extensions": "*"
     },
     "autoload": {
@@ -19,7 +19,7 @@
     "target-dir": "Ecommit/MediaBrowserBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0.x-dev"
+            "dev-master": "2.1.x-dev"
         }
     }
 }
