@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class FileManager
 {
+    protected $kernelRootDir;
+
     protected $rootPath;
 
     protected $rootDir;
@@ -40,9 +42,22 @@ class FileManager
      *
      * @param string $rootDir The root dir
      * @param string $kernelRootDir The root dir
-     * @throws MediaBrowserException
      */
     public function __construct($rootDir, $kernelRootDir)
+    {
+        $this->kernelRootDir = $kernelRootDir;
+        $this->setRootDir($rootDir);
+        $this->fileSystem = new Filesystem();
+    }
+
+    /**
+     * Sets root dir
+     *
+     * @param string $rootDir The root dir
+     * @param string $kernelRootDir The root dir
+     * @throws MediaBrowserException
+     */
+    public function setRootDir($rootDir)
     {
         $rootDir = \str_replace('\\', '/', $rootDir);
         if (\substr($rootDir, 0, 1) == '/') {
@@ -52,7 +67,7 @@ class FileManager
             $rootDir = $rootDir . '/';
         }
 
-        $rootPath = \realpath($kernelRootDir . '/../web/' . $rootDir);
+        $rootPath = \realpath($this->kernelRootDir . '/../web/' . $rootDir);
         if (!\is_dir($rootPath)) {
             throw new MediaBrowserException('Bad root path');
         }
@@ -60,7 +75,6 @@ class FileManager
         $this->rootPath = $rootPath;
         $this->requestPath = $rootPath;
         $this->rootDir = $rootDir;
-        $this->fileSystem = new Filesystem();
     }
 
     /**
